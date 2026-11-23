@@ -1,5 +1,8 @@
 import { readFileSync } from 'node:fs';
 
+/** DI token for the validated ApprovalRules. */
+export const APPROVAL_RULES = Symbol('APPROVAL_RULES');
+
 /** Approval policy as data (config/approval-rules.json). Validated at load; invalid config fails fast. */
 export interface ApprovalRules {
   businessTimezone: string;

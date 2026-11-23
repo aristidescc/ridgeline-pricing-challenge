@@ -1,0 +1,24 @@
+info:
+  name: "01 No user header - 401"
+  type: http
+  seq: 1
+http:
+  method: GET
+  url: '{{baseUrl}}/quotes'
+  auth: none
+runtime:
+  assertions:
+    - expression: res.status
+      operator: eq
+      value: "401"
+  scripts:
+    - type: tests
+      code: |-
+        test("01 No user header - 401", function() {
+            expect(res.getBody().message).to.contain("x-user-id");
+        });
+settings:
+  encodeUrl: true
+  timeout: 0
+docs: |-
+  AuthGuard: missing x-user-id → 401.

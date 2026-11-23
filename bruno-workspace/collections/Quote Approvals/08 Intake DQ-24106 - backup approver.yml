@@ -1,0 +1,63 @@
+info:
+  name: "08 Intake DQ-24106 - backup approver"
+  type: http
+  seq: 8
+http:
+  method: POST
+  url: '{{baseUrl}}/quotes'
+  headers:
+    - name: x-user-id
+      value: intake
+  body:
+    type: json
+    data: |-
+      {
+        "draft_id": "DQ-24106",
+        "rfq_id": "RFQ-1014",
+        "customer_id": "C1001",
+        "created_at": "2026-10-12T08:50:00-05:00",
+        "prepared_by": "S03",
+        "proposed_discount_pct": 5,
+        "lines": [
+          {
+            "line": 1,
+            "part_number": "RL109071",
+            "description": "AC motor 10 HP, 1800 RPM, 3-phase 208-230/460V, TEFC, 56/145T/184T frame",
+            "quantity": 40,
+            "unit": "EA",
+            "extraction_confidence": 0.97
+          },
+          {
+            "line": 2,
+            "part_number": "RL115129",
+            "description": "Jaw coupling hub, L-100, 1 in bore",
+            "quantity": 80,
+            "unit": "EA",
+            "extraction_confidence": 0.97
+          },
+          {
+            "line": 3,
+            "part_number": "RL185717",
+            "description": "Pillow block bearing, 1 in bore, cast iron, set screw",
+            "quantity": 80,
+            "unit": "EA",
+            "extraction_confidence": 0.97
+          }
+        ]
+      }
+  auth: none
+runtime:
+  scripts:
+    - type: tests
+      code: |-
+        test("08 Intake DQ-24106 - backup approver", function() {
+            expect([201, 200]).to.include(res.getStatus());
+            const b = res.getBody();
+            expect(b.routing.approver_id).to.equal("U04");
+            expect(b.approval.primary_approver_id).to.equal("U02");
+        });
+settings:
+  encodeUrl: true
+  timeout: 0
+docs: |-
+  $47,652 ≥ $25k → RM Central U02, out of office 10-12..10-16 → backup U04.

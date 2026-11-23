@@ -1,0 +1,31 @@
+info:
+  name: "19 Audit trail DQ-24102"
+  type: http
+  seq: 19
+http:
+  method: GET
+  url: '{{baseUrl}}/quotes/DQ-24102/audit'
+  headers:
+    - name: x-user-id
+      value: S01
+  auth: none
+runtime:
+  assertions:
+    - expression: res.status
+      operator: eq
+      value: "200"
+  scripts:
+    - type: tests
+      code: |-
+        test("19 Audit trail DQ-24102", function() {
+            const rows = res.getBody();
+            expect(rows.map(r => r.action)).to.deep.equal(["quote_created", "specialist_approved", "approver_approved"]);
+            expect(rows[2].actor).to.equal("U01");
+            expect(rows[2].from_status).to.equal("pending_approver");
+            expect(rows[2].to_status).to.equal("approved");
+        });
+settings:
+  encodeUrl: true
+  timeout: 0
+docs: |-
+  Who, what, when, status before/after.

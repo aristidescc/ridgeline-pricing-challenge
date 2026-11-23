@@ -1,0 +1,25 @@
+info:
+  name: "13 Approve DQ-24102 as wrong manager - 403"
+  type: http
+  seq: 13
+http:
+  method: POST
+  url: '{{baseUrl}}/quotes/DQ-24102/approve'
+  headers:
+    - name: x-user-id
+      value: U03
+  body:
+    type: json
+    data: |-
+      {}
+  auth: none
+runtime:
+  assertions:
+    - expression: res.status
+      operator: eq
+      value: "403"
+settings:
+  encodeUrl: true
+  timeout: 0
+docs: |-
+  Only the routed approver (U01) may approve.

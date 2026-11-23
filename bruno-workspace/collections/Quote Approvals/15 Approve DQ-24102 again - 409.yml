@@ -1,0 +1,25 @@
+info:
+  name: "15 Approve DQ-24102 again - 409"
+  type: http
+  seq: 15
+http:
+  method: POST
+  url: '{{baseUrl}}/quotes/DQ-24102/approve'
+  headers:
+    - name: x-user-id
+      value: U01
+  body:
+    type: json
+    data: |-
+      {}
+  auth: none
+runtime:
+  assertions:
+    - expression: res.status
+      operator: eq
+      value: "409"
+settings:
+  encodeUrl: true
+  timeout: 0
+docs: |-
+  No double approval: terminal status → Conflict.

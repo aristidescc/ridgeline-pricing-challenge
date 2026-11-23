@@ -1,0 +1,7 @@
+name: Local
+variables:
+  - name: baseUrl
+    value: http://localhost:3000
+    enabled: true
+    secret: false
+    description: Ridgeline quote approvals service (pnpm run start:demo)

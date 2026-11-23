@@ -1,0 +1,33 @@
+info:
+  name: "18 Reject DQ-24103 as specialist"
+  type: http
+  seq: 18
+http:
+  method: POST
+  url: '{{baseUrl}}/quotes/DQ-24103/reject'
+  headers:
+    - name: x-user-id
+      value: S01
+  body:
+    type: json
+    data: |-
+      {
+        "reason": "RL120374 not found in stock; customer to confirm substitute"
+      }
+  auth: none
+runtime:
+  assertions:
+    - expression: res.status
+      operator: eq
+      value: "200"
+  scripts:
+    - type: tests
+      code: |-
+        test("18 Reject DQ-24103 as specialist", function() {
+            expect(res.getBody().status).to.equal("rejected");
+        });
+settings:
+  encodeUrl: true
+  timeout: 0
+docs: |-
+  18 Reject DQ-24103 as specialist

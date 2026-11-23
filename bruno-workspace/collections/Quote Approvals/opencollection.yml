@@ -1,0 +1,15 @@
+opencollection: 1.0.0
+
+info:
+  name: Quote Approvals
+bundled: false
+extensions:
+  bruno:
+    defaultEnvironment: Local
+    ignore:
+      - node_modules
+      - .git
+docs: |-
+  Ridgeline quote approvals API. Run the requests in order (collection runner) against a fresh store:
+    APP_DB_PATH=:memory: pnpm run start:demo     (needs the stock mock on :8080: pnpm run stock:mock)
+  Auth stub: every request sends x-user-id (intake, S01-S03 specialists, U01-U05 approvers).

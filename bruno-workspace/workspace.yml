@@ -4,6 +4,8 @@ info:
   type: workspace
 
 collections:
+  - name: "Quote Approvals"
+    path: "collections/Quote Approvals"
   - name: "Stock API"
     path: "collections/Stock API"
   - name: "Empty Collection"

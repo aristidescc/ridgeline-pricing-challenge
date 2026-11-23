@@ -1,0 +1,25 @@
+info:
+  name: "11 Approve DQ-24102 as manager before specialist - 403"
+  type: http
+  seq: 11
+http:
+  method: POST
+  url: '{{baseUrl}}/quotes/DQ-24102/approve'
+  headers:
+    - name: x-user-id
+      value: U01
+  body:
+    type: json
+    data: |-
+      {}
+  auth: none
+runtime:
+  assertions:
+    - expression: res.status
+      operator: eq
+      value: "403"
+settings:
+  encodeUrl: true
+  timeout: 0
+docs: |-
+  Specialist sign-off always comes first.

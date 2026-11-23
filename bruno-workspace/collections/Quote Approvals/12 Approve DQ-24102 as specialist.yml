@@ -1,0 +1,34 @@
+info:
+  name: "12 Approve DQ-24102 as specialist"
+  type: http
+  seq: 12
+http:
+  method: POST
+  url: '{{baseUrl}}/quotes/DQ-24102/approve'
+  headers:
+    - name: x-user-id
+      value: S01
+  body:
+    type: json
+    data: |-
+      {
+        "comment": "pricing checked"
+      }
+  auth: none
+runtime:
+  assertions:
+    - expression: res.status
+      operator: eq
+      value: "200"
+  scripts:
+    - type: tests
+      code: |-
+        test("12 Approve DQ-24102 as specialist", function() {
+            expect(res.getBody().status).to.equal("pending_approver");
+            expect(res.getBody().approval.specialist_id).to.equal("S01");
+        });
+settings:
+  encodeUrl: true
+  timeout: 0
+docs: |-
+  12 Approve DQ-24102 as specialist

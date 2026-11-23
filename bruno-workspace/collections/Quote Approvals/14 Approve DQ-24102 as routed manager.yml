@@ -1,0 +1,33 @@
+info:
+  name: "14 Approve DQ-24102 as routed manager"
+  type: http
+  seq: 14
+http:
+  method: POST
+  url: '{{baseUrl}}/quotes/DQ-24102/approve'
+  headers:
+    - name: x-user-id
+      value: U01
+  body:
+    type: json
+    data: |-
+      {
+        "comment": "approved for 18%"
+      }
+  auth: none
+runtime:
+  assertions:
+    - expression: res.status
+      operator: eq
+      value: "200"
+  scripts:
+    - type: tests
+      code: |-
+        test("14 Approve DQ-24102 as routed manager", function() {
+            expect(res.getBody().status).to.equal("approved");
+        });
+settings:
+  encodeUrl: true
+  timeout: 0
+docs: |-
+  14 Approve DQ-24102 as routed manager

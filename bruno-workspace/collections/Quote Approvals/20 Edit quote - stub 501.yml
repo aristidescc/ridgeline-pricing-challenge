@@ -1,0 +1,31 @@
+info:
+  name: "20 Edit quote - stub 501"
+  type: http
+  seq: 20
+http:
+  method: PATCH
+  url: '{{baseUrl}}/quotes/DQ-24102'
+  headers:
+    - name: x-user-id
+      value: S01
+  body:
+    type: json
+    data: |-
+      {}
+  auth: none
+runtime:
+  assertions:
+    - expression: res.status
+      operator: eq
+      value: "501"
+  scripts:
+    - type: tests
+      code: |-
+        test("20 Edit quote - stub 501", function() {
+            expect(res.getBody().message).to.contain("reprice");
+        });
+settings:
+  encodeUrl: true
+  timeout: 0
+docs: |-
+  Stub: explains edit → reprice → reroute.

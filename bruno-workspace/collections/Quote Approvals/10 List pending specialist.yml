@@ -1,0 +1,28 @@
+info:
+  name: "10 List pending specialist"
+  type: http
+  seq: 10
+http:
+  method: GET
+  url: '{{baseUrl}}/quotes?status=pending_specialist'
+  headers:
+    - name: x-user-id
+      value: S01
+  auth: none
+runtime:
+  assertions:
+    - expression: res.status
+      operator: eq
+      value: "200"
+  scripts:
+    - type: tests
+      code: |-
+        test("10 List pending specialist", function() {
+            expect(res.getBody()).to.be.an("array");
+            res.getBody().forEach(q => expect(q.status).to.equal("pending_specialist"));
+        });
+settings:
+  encodeUrl: true
+  timeout: 0
+docs: |-
+  Specialist work queue.

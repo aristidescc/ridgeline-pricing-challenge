@@ -1,0 +1,25 @@
+info:
+  name: "17 Reject DQ-24103 without reason - 400"
+  type: http
+  seq: 17
+http:
+  method: POST
+  url: '{{baseUrl}}/quotes/DQ-24103/reject'
+  headers:
+    - name: x-user-id
+      value: S01
+  body:
+    type: json
+    data: |-
+      {}
+  auth: none
+runtime:
+  assertions:
+    - expression: res.status
+      operator: eq
+      value: "400"
+settings:
+  encodeUrl: true
+  timeout: 0
+docs: |-
+  17 Reject DQ-24103 without reason - 400

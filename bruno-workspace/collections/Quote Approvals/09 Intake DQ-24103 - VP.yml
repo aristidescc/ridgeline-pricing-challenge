@@ -1,0 +1,88 @@
+info:
+  name: "09 Intake DQ-24103 - VP"
+  type: http
+  seq: 9
+http:
+  method: POST
+  url: '{{baseUrl}}/quotes'
+  headers:
+    - name: x-user-id
+      value: intake
+  body:
+    type: json
+    data: |-
+      {
+        "draft_id": "DQ-24103",
+        "rfq_id": "RFQ-1011",
+        "customer_id": "C1007",
+        "created_at": "2026-10-12T08:20:00-05:00",
+        "prepared_by": "S01",
+        "proposed_discount_pct": 22,
+        "lines": [
+          {
+            "line": 1,
+            "part_number": "RL178907",
+            "description": "Deep groove ball bearing 6206-ZZ, metal shielded both sides",
+            "quantity": 12,
+            "unit": "EA",
+            "extraction_confidence": 0.97
+          },
+          {
+            "line": 2,
+            "part_number": "RL125203",
+            "description": "Classic V-belt B55 (5L58), 21/32 in top width",
+            "quantity": 4,
+            "unit": "EA",
+            "extraction_confidence": 0.97
+          },
+          {
+            "line": 3,
+            "part_number": "RL120374",
+            "description": "Hydraulic fitting, JIC -08 (1/2 in) male to 1/2 in NPT male, 90 deg elbow, forged steel, Gen 2",
+            "quantity": 25,
+            "unit": "EA",
+            "extraction_confidence": 0.97
+          },
+          {
+            "line": 4,
+            "part_number": "RL194646",
+            "description": "Hydraulic return filter element, 10 micron, cellulose, 9.5 in length",
+            "quantity": 6,
+            "unit": "EA",
+            "extraction_confidence": 0.88
+          },
+          {
+            "line": 5,
+            "part_number": "RL131850",
+            "description": "Cut-resistant gloves, ANSI A4, nitrile palm coating, size L",
+            "quantity": 12,
+            "unit": "PR",
+            "extraction_confidence": 0.97
+          },
+          {
+            "line": 6,
+            "part_number": "RL185180",
+            "description": "Ball valve 1 in, 316 stainless steel, full port, NPT, 1000 WOG",
+            "quantity": 3,
+            "unit": "EA",
+            "extraction_confidence": 0.97
+          }
+        ]
+      }
+  auth: none
+runtime:
+  scripts:
+    - type: tests
+      code: |-
+        test("09 Intake DQ-24103 - VP", function() {
+            expect([201, 200]).to.include(res.getStatus());
+            const r = res.getBody().routing;
+            expect(r.approver_id).to.equal("U05");
+            expect(r.effective_discount_pct).to.equal(26.22);
+            expect(r.specialist_review_flags[0].reason).to.contain("not found in stock API");
+        });
+settings:
+  encodeUrl: true
+  timeout: 0
+docs: |-
+  Proposed 22% but effective 26.22% vs list → VP of Sales.

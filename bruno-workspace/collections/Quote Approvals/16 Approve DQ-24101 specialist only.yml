@@ -1,0 +1,31 @@
+info:
+  name: "16 Approve DQ-24101 specialist only"
+  type: http
+  seq: 16
+http:
+  method: POST
+  url: '{{baseUrl}}/quotes/DQ-24101/approve'
+  headers:
+    - name: x-user-id
+      value: S02
+  body:
+    type: json
+    data: |-
+      {}
+  auth: none
+runtime:
+  assertions:
+    - expression: res.status
+      operator: eq
+      value: "200"
+  scripts:
+    - type: tests
+      code: |-
+        test("16 Approve DQ-24101 specialist only", function() {
+            expect(res.getBody().status).to.equal("approved");
+        });
+settings:
+  encodeUrl: true
+  timeout: 0
+docs: |-
+  Specialist-only tier: one human sign-off completes it.

@@ -1,0 +1,64 @@
+info:
+  name: "06 Intake DQ-24102 replay - idempotent 200"
+  type: http
+  seq: 6
+http:
+  method: POST
+  url: '{{baseUrl}}/quotes'
+  headers:
+    - name: x-user-id
+      value: intake
+  body:
+    type: json
+    data: |-
+      {
+        "draft_id": "DQ-24102",
+        "rfq_id": "RFQ-1010",
+        "customer_id": "C1008",
+        "created_at": "2026-10-12T08:11:00-05:00",
+        "prepared_by": "S02",
+        "proposed_discount_pct": 18,
+        "lines": [
+          {
+            "line": 1,
+            "part_number": "RL142504",
+            "description": "Hex cap screw 3/8-16 x 1-1/2 in, grade 5, zinc plated, box of 100",
+            "quantity": 3,
+            "unit": "BX",
+            "extraction_confidence": 0.97
+          },
+          {
+            "line": 2,
+            "part_number": "RL153354",
+            "description": "Disposable nitrile gloves, 5 mil, powder-free, size L, box of 100",
+            "quantity": 5,
+            "unit": "BX",
+            "extraction_confidence": 0.97
+          },
+          {
+            "line": 3,
+            "part_number": "RL165909",
+            "description": "O-ring AS568-214, Buna-N 70A, pack of 25",
+            "quantity": 4,
+            "unit": "PK",
+            "extraction_confidence": 0.97
+          }
+        ]
+      }
+  auth: none
+runtime:
+  assertions:
+    - expression: res.status
+      operator: eq
+      value: "200"
+  scripts:
+    - type: tests
+      code: |-
+        test("06 Intake DQ-24102 replay - idempotent 200", function() {
+            expect(res.getBody().draft_id).to.equal("DQ-24102");
+        });
+settings:
+  encodeUrl: true
+  timeout: 0
+docs: |-
+  Same draft_id again → stored quote returned, no second approval request.

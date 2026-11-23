@@ -41,7 +41,7 @@ Started: 2026-11-23T02:31:45Z · Budget: 60 min · Status: APPROVED (02:36Z)
 - D8: Stock is fetched through HTTP against `mock_stock_api.py` (human's answer) using the batch endpoint `GET /v1/stock?part_numbers=` (≤50) per quote. 404 / `not_found` = "not found" flag (not a failure). 503 / timeout = retry. The fixture client is used in tests.
 - D9: Money in integer cents; line net = round(qty × unit price × (1 − disc)) in cents; percentages rounded to 2 decimals only at output.
 - D10: Tooling follows the existing scaffold (pnpm, Vitest, oxlint, ESM) rather than the npm/Jest in CLAUDE.md. AGENTS.md governs the scaffold.
-- D14: Four-eyes on the approver step: the specialist who signed off cannot also approve (review #2). A manager/VP-tier quote with no available approver cannot be advanced: 409, manual assignment (review #3).
+- D14: No four-eyes rule (human decision after review #2): if one person holds both roles, they may give the specialist sign-off and the approver sign-off; both steps are still audited separately. A manager/VP-tier quote with no available approver cannot be advanced: 409, manual assignment (review #3).
 - D12: Stock API `retry_after_seconds` is not honored; exponential backoff with jitter (200 ms base, 4 attempts, 1 s per-try timeout, all env-configurable) keeps the batch fast. Prod: honor Retry-After and add a circuit breaker.
 - D13: Intake is idempotent on `draft_id` (a replay returns the stored quote with 200); duplicates by content use D5.
 - D11: Reporting data and approvers are loaded from CSV with no extra parser dependency (a small quoted-CSV reader). Thresholds live in config; the people directory comes from `approvers.csv` (the system of record).

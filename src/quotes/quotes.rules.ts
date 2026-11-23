@@ -60,13 +60,11 @@ export type Decision =
 /**
  * Who may approve/reject right now. Authorization of the action itself lives here (and in
  * the service), not only in the guard: a specialist signs off first, then only the routed
- * approver (backup already applied) may decide.
+ * approver (backup already applied) may decide. D14: the same person may hold both steps
+ * if they hold both roles (no four-eyes rule).
  */
 export function decide(
-  quote: Pick<
-    QuoteRecord,
-    'status' | 'approverId' | 'evaluation' | 'specialistId'
-  >,
+  quote: Pick<QuoteRecord, 'status' | 'approverId' | 'evaluation'>,
   actor: Actor,
   action: 'approve' | 'reject',
   specialistRole: string,
@@ -103,14 +101,6 @@ export function decide(
         ok: false,
         error: 'forbidden',
         message: `quote is routed to approver ${quote.approverId}`,
-      };
-    }
-    if (actor.id === quote.specialistId) {
-      // Four-eyes: the specialist who signed off cannot also be the approver.
-      return {
-        ok: false,
-        error: 'forbidden',
-        message: 'the specialist who signed off cannot also approve this quote',
       };
     }
     return {

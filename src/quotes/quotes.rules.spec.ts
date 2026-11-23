@@ -147,7 +147,7 @@ describe('decide (who may approve)', () => {
       { ok: false, error: 'forbidden' },
     ],
     [
-      'specialist who signed off cannot also approve as the routed approver',
+      'the specialist who signed off may also approve as the routed approver (D14)',
       {
         ...pendingSpecialist('regional_manager'),
         status: 'pending_approver' as const,
@@ -155,7 +155,7 @@ describe('decide (who may approve)', () => {
       },
       U01,
       'approve',
-      { ok: false, error: 'forbidden' },
+      { ok: true, to: 'approved' },
     ],
     [
       'manager tier with no available approver → conflict, never parked',

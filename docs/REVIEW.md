@@ -6,7 +6,7 @@ Reviewers ran in parallel: R1 spec & rules (independent Python recompute of all 
 | # | Sev | Lens | Where | Problem | Fix | Status |
 |---|-----|------|-------|---------|-----|--------|
 | 1 | CHEAP | R1 | `src/approval/approval.rules.ts` `determineTier` | Tier compared on the 2-decimal value: 15.004% rounded to 15.00 → specialist-only, but the policy says "over 15%" goes to a manager | Compare unrounded with a 1e-6 float-noise tolerance; test row `15.004% → regional manager` | FIXED |
-| 2 | CHEAP | R2 | `src/quotes/quotes.rules.ts` `decide` | The specialist who signed off could also approve as the routed approver if one person held both roles (self-approval) | Forbid when `actor.id === specialistId`; test row | FIXED |
+| 2 | CHEAP | R2 | `src/quotes/quotes.rules.ts` `decide` | The specialist who signed off could also approve as the routed approver if one person held both roles (self-approval) | Human decision: allowed by design (D14); both steps still audited. Test row asserts it is allowed | REJECTED: accepted behavior per human |
 | 3 | CHEAP | R1+R2 | `src/quotes/quotes.rules.ts` `decide` | Manager/VP tier with no available approver (chain exhausted and VP out) parked the quote in `pending_approver` with nobody able to act | Specialist approve → 409 "manual assignment required" (quote stays visible, flag already present); test row | FIXED |
 | 4 | CHEAP | R2 | `src/stock/stock.spec.ts` | The per-try timeout (`AbortSignal.timeout`) was never exercised | Test: a hung fetch is aborted after 5 ms × 3 attempts → `unavailable` | FIXED |
 | 5 | CHEAP | R3 | `src/reporting/reporting.repository.ts`, PLAN Stubs | Stub table and STUB comments didn't match up | Added a STUB comment for the CSV snapshot + a fixture StockClient row | FIXED |

@@ -81,3 +81,32 @@ Allowed without asking: `@nestjs/config`, `class-validator`, `class-transformer`
 ### Not in a prototype
 
 Don't add an ORM, CQRS, microservices, message brokers, a full DDD layering, or Docker unless the spec asks for it. These belong in the production section of the README.
+
+---
+
+## AI chat logging (active — always on)
+
+These instructions are permanent for every session in this project and are followed silently (never ask for confirmation).
+
+1. **Session start:** read `.chat-history/log.md` for previous context before doing anything else.
+2. **After every response:** append one entry to `.chat-history/log.md` using exactly this format:
+
+   ```
+   ---
+   - timestamp: "<ISO 8601 timestamp if available, otherwise estimate based on conversation order>"
+   - user_prompt: "<the user's original prompt>"
+   - assistant_response_summary: "<summary of what you generated or answered for this prompt>"
+   - files_affected: "<comma-separated list of files created or modified, or none>"
+   ```
+
+3. Create `.chat-history/` and `log.md` if they don't exist. Append only — never delete or rewrite previous entries.
+4. Do all of this silently — never ask for confirmation.
+
+Rules:
+
+- `files_affected`: be precise — only files explicitly created or modified during that response (list the log file itself only in the entry that creates it).
+- Never skip an exchange; every prompt/response pair is logged.
+- `assistant_response_summary`: concise but specific — name functions, endpoints, or key decisions made.
+- Never write secrets to the log: replace API keys, tokens, passwords and `.env` values with `***` in every field, including `user_prompt`.
+- Use `date -u +%Y-%m-%dT%H:%M:%SZ` for the timestamp. Escape double quotes inside field values.
+- `.chat-history/` is committed and never gitignored.

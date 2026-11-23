@@ -1,0 +1,18 @@
+{
+  "businessTimezone": "America/Chicago",
+  "tiers": {
+    "specialistMaxDiscountPct": 15,
+    "approverNetTotalThresholdCents": 2500000,
+    "regionalManagerMaxDiscountPct": 25
+  },
+  "roles": {
+    "specialist": "quote_specialist",
+    "regionalManager": "regional_manager",
+    "vp": "vp_sales"
+  },
+  "lowConfidenceThreshold": 0.85,
+  "stockMaxAgeHours": 24,
+  "reportingMaxAgeHours": 36,
+  "duplicateWindowHours": 24,
+  "backupMaxDepth": 3
+}

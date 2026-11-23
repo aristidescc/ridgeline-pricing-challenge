@@ -98,7 +98,7 @@ Entry points: HTTP `pnpm run start:dev` · batch `pnpm run process` (mock on :80
 - [x] T3 (6) Stock client + retry + staleness — `src/common/retry.ts`, `src/stock/*` — tests: retry then success, exhausted → unavailable (fake sleep), not_found / out-of-stock / stale flags — done when: green — done T+12, 9 tests
 - [x] T4 (6) DB + audit + quotes repo + duplicate rule — `src/database/*`, `src/audit/*`, `src/quotes/quotes.repository.ts`, `quotes.rules.ts` — tests: duplicate (DQ-24110→DQ-24102), outside the 24 h window, different lines — done when: green — done T+13, 11 tests (+ approve/reject decision rules)
 - [x] T5 (8) Quotes service + API + auth — `quotes.service/controller/dto`, `common/auth.guard.ts` — POST/GET/approve/reject/PATCH-501, role checks in the service, guarded transitions + audit in one txn — tests: service with fake ports (specialist → approver → approved; wrong user 403; double approve 409) — done when: green — done T+16, 5 service tests (+6 decision rules in T4)
-- [ ] T6 (5) Batch CLI + output + e2e smoke — `src/cli/process-drafts.ts`, `test/quotes.e2e-spec.ts` — run against the mock → `outputs/routing_results.json` matching §4 expectations — done when: file produced by running the service, e2e green
+- [x] T6 (5) Batch CLI + output + e2e smoke — `src/cli/process-drafts.ts`, `test/quotes.e2e-spec.ts` — run against the mock → `outputs/routing_results.json` matching §4 expectations — done when: file produced by running the service, e2e green — done T+16, 4 e2e tests; output produced against the mock (1 retried 503 in the log)
 Total: 38 min
 
 ## 8. Acceptance checklist

@@ -1,0 +1,176 @@
+[
+  {
+    "id": 1,
+    "actor": "system",
+    "action": "quote_created",
+    "entity_id": "DQ-24101",
+    "from_status": null,
+    "to_status": "pending_specialist",
+    "at": "2026-10-12T14:30:00.000Z",
+    "details": {
+      "tier": "specialist_only",
+      "approver_id": null,
+      "primary_approver_id": null,
+      "net_cents": 43523,
+      "effective_discount_pct": 8.000760970660359,
+      "stock_status": "ok",
+      "flags": 0
+    }
+  },
+  {
+    "id": 2,
+    "actor": "system",
+    "action": "quote_created",
+    "entity_id": "DQ-24102",
+    "from_status": null,
+    "to_status": "pending_specialist",
+    "at": "2026-10-12T14:30:00.000Z",
+    "details": {
+      "tier": "regional_manager",
+      "approver_id": "U01",
+      "primary_approver_id": "U01",
+      "net_cents": 13246,
+      "effective_discount_pct": 18.00173331682555,
+      "stock_status": "ok",
+      "flags": 0
+    }
+  },
+  {
+    "id": 3,
+    "actor": "system",
+    "action": "quote_created",
+    "entity_id": "DQ-24103",
+    "from_status": null,
+    "to_status": "pending_specialist",
+    "at": "2026-10-12T14:30:00.000Z",
+    "details": {
+      "tier": "vp",
+      "approver_id": "U05",
+      "primary_approver_id": "U05",
+      "net_cents": 72880,
+      "effective_discount_pct": 26.221376364114924,
+      "stock_status": "flagged",
+      "flags": 1
+    }
+  },
+  {
+    "id": 4,
+    "actor": "system",
+    "action": "quote_created",
+    "entity_id": "DQ-24104",
+    "from_status": null,
+    "to_status": "pending_specialist",
+    "at": "2026-10-12T14:30:00.000Z",
+    "details": {
+      "tier": "vp",
+      "approver_id": "U05",
+      "primary_approver_id": "U05",
+      "net_cents": 219100,
+      "effective_discount_pct": 30.000000000000004,
+      "stock_status": "flagged",
+      "flags": 1
+    }
+  },
+  {
+    "id": 5,
+    "actor": "system",
+    "action": "quote_created",
+    "entity_id": "DQ-24105",
+    "from_status": null,
+    "to_status": "pending_specialist",
+    "at": "2026-10-12T14:30:00.000Z",
+    "details": {
+      "tier": "specialist_only",
+      "approver_id": null,
+      "primary_approver_id": null,
+      "net_cents": 47120,
+      "effective_discount_pct": 5.000000000000004,
+      "stock_status": "ok",
+      "flags": 1
+    }
+  },
+  {
+    "id": 6,
+    "actor": "system",
+    "action": "quote_created",
+    "entity_id": "DQ-24106",
+    "from_status": null,
+    "to_status": "pending_specialist",
+    "at": "2026-10-12T14:30:00.000Z",
+    "details": {
+      "tier": "regional_manager",
+      "approver_id": "U04",
+      "primary_approver_id": "U02",
+      "net_cents": 4765200,
+      "effective_discount_pct": 5.000000000000004,
+      "stock_status": "ok",
+      "flags": 0
+    }
+  },
+  {
+    "id": 7,
+    "actor": "system",
+    "action": "quote_created",
+    "entity_id": "DQ-24107",
+    "from_status": null,
+    "to_status": "pending_specialist",
+    "at": "2026-10-12T14:30:00.000Z",
+    "details": {
+      "tier": "regional_manager",
+      "approver_id": "U01",
+      "primary_approver_id": "U01",
+      "net_cents": 45654,
+      "effective_discount_pct": 15.37720111214087,
+      "stock_status": "ok",
+      "flags": 1
+    }
+  },
+  {
+    "id": 8,
+    "actor": "system",
+    "action": "quote_created",
+    "entity_id": "DQ-24108",
+    "from_status": null,
+    "to_status": "pending_specialist",
+    "at": "2026-10-12T14:30:00.000Z",
+    "details": {
+      "tier": "specialist_only",
+      "approver_id": null,
+      "primary_approver_id": null,
+      "net_cents": 151740,
+      "effective_discount_pct": 9.999999999999998,
+      "stock_status": "flagged",
+      "flags": 1
+    }
+  },
+  {
+    "id": 9,
+    "actor": "system",
+    "action": "quote_created",
+    "entity_id": "DQ-24109",
+    "from_status": null,
+    "to_status": "pending_specialist",
+    "at": "2026-10-12T14:30:00.000Z",
+    "details": {
+      "tier": "regional_manager",
+      "approver_id": "U04",
+      "primary_approver_id": "U02",
+      "net_cents": 140986,
+      "effective_discount_pct": 18.36363636363636,
+      "stock_status": "flagged",
+      "flags": 2
+    }
+  },
+  {
+    "id": 10,
+    "actor": "system",
+    "action": "draft_duplicate_detected",
+    "entity_id": "DQ-24110",
+    "from_status": null,
+    "to_status": "duplicate",
+    "at": "2026-10-12T14:30:00.000Z",
+    "details": {
+      "duplicate_of": "DQ-24102"
+    }
+  }
+]

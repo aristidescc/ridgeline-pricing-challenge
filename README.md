@@ -4,7 +4,7 @@ A NestJS service that takes draft quotes from the extraction (Intake) team, pric
 
 ## Repository
 
-TODO: public GitHub URL (no git remote configured yet)
+https://github.com/aristidescc/ridgeline-pricing-challenge
 
 ## How to Run
 
@@ -54,7 +54,7 @@ API (send the stub identity in `x-user-id`: `intake`, specialists `S01`–`S03`,
 | `POST` | `/quotes/:id/reject` `{reason}` | same rules as approve |
 | `PATCH` | `/quotes/:id` | stub, returns 501 (see Approach) |
 
-A Bruno collection with 21 scenarios is in `bruno-workspace/collections/Quote Approvals`. Run it in order against `APP_DB_PATH=:memory: pnpm run start:demo`.
+A Bruno collection with 23 scenarios is in `bruno-workspace/collections/Quote Approvals`. Run it in order against `APP_DB_PATH=:memory: pnpm run start:demo`.
 
 Output note: amounts are rounded to 2 decimals. JSON drops trailing zeros, so `728.80` prints as `728.8`.
 

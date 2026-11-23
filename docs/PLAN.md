@@ -31,7 +31,7 @@ Started: 2026-11-23T02:31:45Z · Budget: 60 min · Status: APPROVED (02:36Z)
 
 ## 3. Decisions
 - **D1 (matters most): degrade by flagging, never by blocking or guessing; the human gate lives in the state machine.** Stock failures and stale data become `specialist_review_flags`, and the quote keeps moving to the right approver immediately. No path reaches `approved` without a specialist sign-off. Trade-off: specialists see more flags, but quotes never stall for hours and never go out on guessed data.
-- D2: Effective discount = `1 − net_total / list_total` (policy §6). Tiers: `≤15% AND net < $25,000` → specialist only; `>15% to ≤25% OR net ≥ $25,000` → regional manager of the customer's region; `>25%` → VP (the VP tier wins over the $ rule). Comparisons are done on unrounded values.
+- D2: Effective discount = `1 − net_total / list_total` (policy §6). Tiers: `≤15% AND net < $25,000` → specialist only; `>15% to ≤25% OR net ≥ $25,000` → regional manager of the customer's region; `>25%` → VP (the VP tier wins over the $ rule). Tier comparisons use the effective % rounded to 2 decimals (the value humans see), so float noise cannot flip a tier.
 - D3: Processing as-of = `2026-10-12T09:30:00-05:00` (policy header), injected via `Clock`/`AS_OF`. Out-of-office uses the date in Central time, inclusive range.
 - D4: Backup chain: if the backup is also out, follow their backup (max depth 3). If the chain is exhausted, route to the VP and flag it. The policy doesn't cover this case.
 - D5: Duplicate = same `rfq_id` + same normalized line set (part_number, qty, unit; order-insensitive) as an earlier draft whose `created_at` is within 24 h (policy §11). The first one is the original. Per the human's answer: duplicate rows are **all nulls** (net_total, discount, approver) with `flags: []` and `duplicate_of` set. No approval request is created.
@@ -94,7 +94,7 @@ Entry points: HTTP `pnpm run start:dev` · batch `pnpm run process` (mock on :80
 
 ## 7. Tasks
 - [x] T1 (6) Config + reporting repo + pure pricing — files: `config/approval-rules.json`, `src/config/*`, `src/common/clock.ts`, `src/reporting/*`, `src/pricing/pricing.rules.ts` — tests: contract vs list vs expired, effective % (DQ-24103 = 26.22) — done when: green — done T+09, 12 tests
-- [ ] T2 (7) Pure routing rules — `src/approval/approval.rules.ts` — tests (it.each): specialist tier, RM tier by %, RM tier by $25k, VP tier, boundary exactly 15.00%, backup when out (U02→U04), backup chain, low-confidence flag — done when: green
+- [x] T2 (7) Pure routing rules — `src/approval/approval.rules.ts` — tests (it.each): specialist tier, RM tier by %, RM tier by $25k, VP tier, boundary exactly 15.00%, backup when out (U02→U04), backup chain, low-confidence flag — done when: green — done T+11, 13 tests
 - [ ] T3 (6) Stock client + retry + staleness — `src/common/retry.ts`, `src/stock/*` — tests: retry then success, exhausted → unavailable (fake sleep), not_found / out-of-stock / stale flags — done when: green
 - [ ] T4 (6) DB + audit + quotes repo + duplicate rule — `src/database/*`, `src/audit/*`, `src/quotes/quotes.repository.ts`, `quotes.rules.ts` — tests: duplicate (DQ-24110→DQ-24102), outside the 24 h window, different lines — done when: green
 - [ ] T5 (8) Quotes service + API + auth — `quotes.service/controller/dto`, `common/auth.guard.ts` — POST/GET/approve/reject/PATCH-501, role checks in the service, guarded transitions + audit in one txn — tests: service with fake ports (specialist → approver → approved; wrong user 403; double approve 409) — done when: green

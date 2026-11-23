@@ -77,6 +77,14 @@ describe('routeQuote — approval tiers', () => {
       'regional_manager',
       'U01',
     ],
+    [
+      '15.004% → regional manager (policy: "over 15%", compared unrounded)',
+      15.004,
+      8499.6,
+      'West',
+      'regional_manager',
+      'U01',
+    ],
     ['26.22% → VP of Sales', 26.22, 728.8, 'Central', 'vp', 'U05'],
     ['30% and $50k → VP wins over the $ rule', 30, 50000, 'East', 'vp', 'U05'],
   ])('%s', (_name, pct, net, region, tier, approverId) => {

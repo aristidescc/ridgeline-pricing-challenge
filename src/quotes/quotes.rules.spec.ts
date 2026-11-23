@@ -98,6 +98,7 @@ describe('decide (who may approve)', () => {
     status: 'pending_specialist' as const,
     approverId: tier === 'specialist_only' ? null : 'U01',
     evaluation: { tier } as never,
+    specialistId: null as string | null,
   });
   const S01 = { id: 'S01', role: 'quote_specialist' };
   const U01 = { id: 'U01', role: 'regional_manager' };
@@ -144,6 +145,24 @@ describe('decide (who may approve)', () => {
       U03,
       'approve',
       { ok: false, error: 'forbidden' },
+    ],
+    [
+      'specialist who signed off cannot also approve as the routed approver',
+      {
+        ...pendingSpecialist('regional_manager'),
+        status: 'pending_approver' as const,
+        specialistId: 'U01',
+      },
+      U01,
+      'approve',
+      { ok: false, error: 'forbidden' },
+    ],
+    [
+      'manager tier with no available approver → conflict, never parked',
+      { ...pendingSpecialist('regional_manager'), approverId: null },
+      S01,
+      'approve',
+      { ok: false, error: 'conflict' },
     ],
     [
       'already approved → conflict (no double approval)',

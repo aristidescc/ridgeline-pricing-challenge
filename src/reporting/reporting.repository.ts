@@ -49,6 +49,7 @@ const toCents = (v: string): number => {
 };
 const orNull = (v: string | undefined): string | null => (v ? v : null);
 
+// STUB: CSV snapshot loaded into memory at boot — prod: read-only replica of the nightly SAP reporting DB.
 /**
  * Read-only view of the nightly reporting export (SAP → reporting DB → CSV snapshot).
  * Loaded once at boot; there is no write path. Never writes to SAP or the reporting DB.

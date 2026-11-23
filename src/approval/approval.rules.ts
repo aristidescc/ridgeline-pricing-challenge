@@ -1,12 +1,14 @@
 import type { ApprovalRules } from '../config/approval-rules.js';
 import type { DraftLine, ReviewFlag } from '../common/domain.types.js';
 import type { Approver } from '../reporting/reporting.repository.js';
-import { round2 } from '../pricing/pricing.rules.js';
+
+/** Tolerance for floating-point noise in percentage comparisons (not a business threshold). */
+const PCT_EPSILON = 1e-6;
 
 export type Tier = 'specialist_only' | 'regional_manager' | 'vp';
 
 export interface RoutingInput {
-  /** Unrounded effective discount; compared at 2 decimals (the value humans see). */
+  /** Unrounded effective discount (compared unrounded, with a float-noise tolerance). */
   effectiveDiscountPct: number;
   netCents: number;
   region: string;
@@ -28,11 +30,12 @@ export interface RoutingDecision {
  *  - "Effective discount over 25% → VP of Sales"
  */
 export function determineTier(input: RoutingInput, rules: ApprovalRules): Tier {
-  const pct = round2(input.effectiveDiscountPct);
+  // Compare the unrounded value ("over 15%" means 15.004% routes up), ignoring float noise.
+  const pct = input.effectiveDiscountPct;
   const t = rules.tiers;
-  if (pct > t.regionalManagerMaxDiscountPct) return 'vp';
+  if (pct - t.regionalManagerMaxDiscountPct > PCT_EPSILON) return 'vp';
   if (
-    pct > t.specialistMaxDiscountPct ||
+    pct - t.specialistMaxDiscountPct > PCT_EPSILON ||
     input.netCents >= t.approverNetTotalThresholdCents
   ) {
     return 'regional_manager';

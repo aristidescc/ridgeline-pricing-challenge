@@ -59,6 +59,26 @@ describe('HttpStockClient', () => {
   });
 });
 
+describe('HttpStockClient timeout', () => {
+  it('aborts a hung stock API after the per-try timeout and returns unavailable', async () => {
+    const hang = (_url: string, init?: RequestInit) =>
+      new Promise<Response>((_resolve, reject) =>
+        init?.signal?.addEventListener('abort', () =>
+          reject(new Error('timeout')),
+        ),
+      );
+    const fetchFn = vi.fn(hang);
+    const client = new HttpStockClient(
+      'http://stock',
+      { ...opts, timeoutMs: 5 },
+      fetchFn as unknown as typeof fetch,
+    );
+    const r = await client.getStock(['P1']);
+    expect(fetchFn).toHaveBeenCalledTimes(3);
+    expect(r).toMatchObject({ status: 'unavailable' });
+  });
+});
+
 describe('stockFlags', () => {
   const asOf = new Date('2026-10-12T09:30:00-05:00');
   const line = (n: number, pn: string) => ({

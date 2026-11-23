@@ -63,7 +63,10 @@ export type Decision =
  * approver (backup already applied) may decide.
  */
 export function decide(
-  quote: Pick<QuoteRecord, 'status' | 'approverId' | 'evaluation'>,
+  quote: Pick<
+    QuoteRecord,
+    'status' | 'approverId' | 'evaluation' | 'specialistId'
+  >,
   actor: Actor,
   action: 'approve' | 'reject',
   specialistRole: string,
@@ -79,6 +82,15 @@ export function decide(
     if (action === 'reject')
       return { ok: true, to: 'rejected', step: 'specialist' };
     const needsApprover = quote.evaluation?.tier !== 'specialist_only';
+    if (needsApprover && !quote.approverId) {
+      // Never park a quote where nobody can decide it: specialist must reject or escalate manually.
+      return {
+        ok: false,
+        error: 'conflict',
+        message:
+          'no available approver for this quote; manual assignment required',
+      };
+    }
     return {
       ok: true,
       to: needsApprover ? 'pending_approver' : 'approved',
@@ -91,6 +103,14 @@ export function decide(
         ok: false,
         error: 'forbidden',
         message: `quote is routed to approver ${quote.approverId}`,
+      };
+    }
+    if (actor.id === quote.specialistId) {
+      // Four-eyes: the specialist who signed off cannot also be the approver.
+      return {
+        ok: false,
+        error: 'forbidden',
+        message: 'the specialist who signed off cannot also approve this quote',
       };
     }
     return {

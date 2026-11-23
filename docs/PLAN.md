@@ -24,6 +24,7 @@ Started: 2026-11-23T02:31:45Z · Budget: 60 min · Status: APPROVED (02:36Z)
 | Intake caller = service user `intake` in the header | Same as above | mTLS or client-credentials token for the extraction service |
 | Quote edit = `PATCH /quotes/:id` returns 501 with the reprice/reroute explanation | Spec allows it | Edit → re-run pricing + routing → audit before/after values → reset approvals |
 | Reporting DB = CSVs loaded read-only into memory at boot | Snapshot is CSV | Read-only replica of the nightly SAP reporting DB |
+| Fixture `StockClient` (`STOCK_CLIENT=fixture`) | Offline runs + tests without the mock | Only `HttpStockClient` against Ridgeline IT's API |
 | Store = local SQLite file | Spec allows it | Postgres (managed), outbox for "approved" events |
 | Sending to the customer / SAP | Out of scope; SAP is read-only | Emit an `quote.approved` event; a downstream service sends it |
 
@@ -31,7 +32,7 @@ Started: 2026-11-23T02:31:45Z · Budget: 60 min · Status: APPROVED (02:36Z)
 
 ## 3. Decisions
 - **D1 (matters most): degrade by flagging, never by blocking or guessing; the human gate lives in the state machine.** Stock failures and stale data become `specialist_review_flags`, and the quote keeps moving to the right approver immediately. No path reaches `approved` without a specialist sign-off. Trade-off: specialists see more flags, but quotes never stall for hours and never go out on guessed data.
-- D2: Effective discount = `1 − net_total / list_total` (policy §6). Tiers: `≤15% AND net < $25,000` → specialist only; `>15% to ≤25% OR net ≥ $25,000` → regional manager of the customer's region; `>25%` → VP (the VP tier wins over the $ rule). Tier comparisons use the effective % rounded to 2 decimals (the value humans see), so float noise cannot flip a tier.
+- D2: Effective discount = `1 − net_total / list_total` (policy §6). Tiers: `≤15% AND net < $25,000` → specialist only; `>15% to ≤25% OR net ≥ $25,000` → regional manager of the customer's region; `>25%` → VP (the VP tier wins over the $ rule). Tier comparisons use the unrounded effective % with a 1e-6 float-noise tolerance (review #1: 15.004% is "over 15%").
 - D3: Processing as-of = `2026-10-12T09:30:00-05:00` (policy header), injected via `Clock`/`AS_OF`. Out-of-office uses the date in Central time, inclusive range.
 - D4: Backup chain: if the backup is also out, follow their backup (max depth 3). If the chain is exhausted, route to the VP and flag it. The policy doesn't cover this case.
 - D5: Duplicate = same `rfq_id` + same normalized line set (part_number, qty, unit; order-insensitive) as an earlier draft whose `created_at` is within 24 h (policy §11). The first one is the original. Per the human's answer: duplicate rows are **all nulls** (net_total, discount, approver) with `flags: []` and `duplicate_of` set. No approval request is created.
@@ -40,6 +41,7 @@ Started: 2026-11-23T02:31:45Z · Budget: 60 min · Status: APPROVED (02:36Z)
 - D8: Stock is fetched through HTTP against `mock_stock_api.py` (human's answer) using the batch endpoint `GET /v1/stock?part_numbers=` (≤50) per quote. 404 / `not_found` = "not found" flag (not a failure). 503 / timeout = retry. The fixture client is used in tests.
 - D9: Money in integer cents; line net = round(qty × unit price × (1 − disc)) in cents; percentages rounded to 2 decimals only at output.
 - D10: Tooling follows the existing scaffold (pnpm, Vitest, oxlint, ESM) rather than the npm/Jest in CLAUDE.md. AGENTS.md governs the scaffold.
+- D14: Four-eyes on the approver step: the specialist who signed off cannot also approve (review #2). A manager/VP-tier quote with no available approver cannot be advanced: 409, manual assignment (review #3).
 - D12: Stock API `retry_after_seconds` is not honored; exponential backoff with jitter (200 ms base, 4 attempts, 1 s per-try timeout, all env-configurable) keeps the batch fast. Prod: honor Retry-After and add a circuit breaker.
 - D13: Intake is idempotent on `draft_id` (a replay returns the stored quote with 200); duplicates by content use D5.
 - D11: Reporting data and approvers are loaded from CSV with no extra parser dependency (a small quoted-CSV reader). Thresholds live in config; the people directory comes from `approvers.csv` (the system of record).

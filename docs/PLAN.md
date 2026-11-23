@@ -40,6 +40,8 @@ Started: 2026-11-23T02:31:45Z · Budget: 60 min · Status: APPROVED (02:36Z)
 - D8: Stock is fetched through HTTP against `mock_stock_api.py` (human's answer) using the batch endpoint `GET /v1/stock?part_numbers=` (≤50) per quote. 404 / `not_found` = "not found" flag (not a failure). 503 / timeout = retry. The fixture client is used in tests.
 - D9: Money in integer cents; line net = round(qty × unit price × (1 − disc)) in cents; percentages rounded to 2 decimals only at output.
 - D10: Tooling follows the existing scaffold (pnpm, Vitest, oxlint, ESM) rather than the npm/Jest in CLAUDE.md. AGENTS.md governs the scaffold.
+- D12: Stock API `retry_after_seconds` is not honored; exponential backoff with jitter (200 ms base, 4 attempts, 1 s per-try timeout, all env-configurable) keeps the batch fast. Prod: honor Retry-After and add a circuit breaker.
+- D13: Intake is idempotent on `draft_id` (a replay returns the stored quote with 200); duplicates by content use D5.
 - D11: Reporting data and approvers are loaded from CSV with no extra parser dependency (a small quoted-CSV reader). Thresholds live in config; the people directory comes from `approvers.csv` (the system of record).
 
 ## 4. Data findings
@@ -104,13 +106,14 @@ Total: 38 min
 ## 8. Acceptance checklist
 | Criterion (from CHALLENGE) | Task | Evidence |
 |---|---|---|
-| Rules configurable + tests per tier, backup, duplicate | T2, T4 | `approval.rules.spec.ts`, `quotes.rules.spec.ts`, `config/approval-rules.json` |
-| Pricing from reporting DB; stock from API; no SAP writes | T1, T3 | `pricing.rules.ts`, `HttpStockClient`; reporting opened read-only |
-| Every action audited | T4, T5 | `audit_log` table; service spec asserts the rows |
-| Stock failure / stale handled visibly; retries | T3 | `retry.spec.ts`, `stock.rules.spec.ts`, flags in the output |
-| No quote reaches a customer without human approval | T5 | state machine; no transition to approved without a specialist |
-| Role-based access | T5 | `quotes.service.spec.ts` 403 cases |
-| `outputs/routing_results.json` matches Deliverable 1 | T6 | `pnpm run process` |
+| Rules configurable + tests per tier, backup, duplicate | T2, T4 | `config/approval-rules.json`; `src/approval/approval.rules.spec.ts` (tiers, 15/25% boundaries, $25k, backup, chain); `src/quotes/quotes.rules.spec.ts` (duplicate) |
+| Pricing from reporting DB; stock from API; no SAP writes | T1, T3 | `src/pricing/pricing.rules.ts`; `HttpStockClient` (`src/stock/stock.client.ts`); `ReportingRepository` has no write path |
+| Every action audited | T4, T5 | `audit_log` + append-only triggers; `quotes.service.spec.ts` audit trail test; `outputs/audit_log.json` |
+| Stock failure / stale handled visibly; retries | T3 | `src/stock/stock.spec.ts` (retry, exhausted → unavailable, stale); batch log shows a retried 503 |
+| No quote reaches a customer without human approval | T5 | `decide()` in `src/quotes/quotes.rules.ts`; every intake starts at `pending_specialist` |
+| Role-based access | T5 | `quotes.rules.spec.ts` decide table; `test/quotes.e2e-spec.ts` 401/403 |
+| `outputs/routing_results.json` matches Deliverable 1 | T6 | `pnpm run process` (against mock :8080) |
+| API scenarios | — | `bruno-workspace/collections/Quote Approvals` (21 requests, all checked against a live server) |
 | README headings, .env.example, .chat-history | ship | `/lite-ship` |
 
 ## 9. Part 1 talking points

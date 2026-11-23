@@ -1,0 +1,25 @@
+info:
+  name: Get stock - out of stock
+  type: http
+  seq: 5
+http:
+  method: GET
+  url: '{{baseUrl}}/v1/stock/RL110322'
+  auth: none
+runtime:
+  assertions:
+    - expression: res.status
+      operator: eq
+      value: "200"
+  scripts:
+    - type: tests
+      code: |-
+        test("zero in every warehouse", function() {
+            const w = res.getBody().warehouses;
+            expect(Object.values(w).every(q => q === 0)).to.equal(true);
+        });
+settings:
+  encodeUrl: true
+  timeout: 0
+docs: |-
+  Zero stock in all warehouses. Policy rule 9: the specialist decides backorder, substitute or remove.

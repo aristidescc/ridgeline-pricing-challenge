@@ -1,0 +1,27 @@
+info:
+  name: Get stock - stale reading
+  type: http
+  seq: 4
+http:
+  method: GET
+  url: '{{baseUrl}}/v1/stock/RL107944'
+  auth: none
+runtime:
+  assertions:
+    - expression: res.status
+      operator: eq
+      value: "200"
+  scripts:
+    - type: tests
+      code: |-
+        test("reading is older than 24h at policy time", function() {
+            const asOf = new Date(res.getBody().as_of);
+            const policyNow = new Date("2026-10-12T09:30:00-05:00");
+            expect((policyNow - asOf) / 36e5).to.be.above(24);
+        });
+settings:
+  encodeUrl: true
+  timeout: 0
+docs: |-
+  as_of is 2026-10-10, more than 24h before the policy time (2026-10-12 09:30 Central).
+  Policy rule 10: stale stock reading -> specialist flag.

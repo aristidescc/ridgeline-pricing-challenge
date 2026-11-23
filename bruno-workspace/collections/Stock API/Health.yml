@@ -1,0 +1,25 @@
+info:
+  name: Health
+  type: http
+  seq: 1
+http:
+  method: GET
+  url: '{{baseUrl}}/v1/health'
+  auth: none
+runtime:
+  assertions:
+    - expression: res.status
+      operator: eq
+      value: "200"
+  scripts:
+    - type: tests
+      code: |-
+        test("body is ok", function() {
+            expect(res.getBody().status).to.equal("ok");
+        });
+settings:
+  encodeUrl: true
+  timeout: 0
+docs: |-
+  GET /v1/health -> {"status": "ok"}.
+  The mock returns 503 on ~10% of requests. Start it with MOCK_FAILURE_RATE=0 for clean runs.

@@ -1,0 +1,38 @@
+info:
+  name: Get stock - batch
+  type: http
+  seq: 6
+
+http:
+  method: GET
+  url: "{{baseUrl}}/v1/stock?part_numbers=RL171482,RL120374"
+  params:
+    - name: part_numbers
+      value: RL171482,RL120374
+      type: query
+
+runtime:
+  scripts:
+    - type: tests
+      code: |-
+        test("unknown part is reported in not_found", function() {
+            expect(res.getBody().not_found).to.include("RL120374");
+        });
+        test("found parts are returned in items", function() {
+            expect(res.getBody().items.length).to.equal(3);
+        });
+  assertions:
+    - expression: res.status
+      operator: eq
+      value: "200"
+
+settings:
+  encodeUrl: true
+  timeout: 0
+  followRedirects: true
+  maxRedirects: 5
+  forwardAuthorizationHeader: true
+
+docs: |-
+  Batch lookup, max 50 part numbers. Unknown parts come back in not_found instead of a 404.
+  One call per quote means fewer requests exposed to the mock's random 503s.

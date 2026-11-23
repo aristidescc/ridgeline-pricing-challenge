@@ -1,0 +1,14 @@
+opencollection: 1.0.0
+info:
+  name: "Challenge"
+  type: workspace
+
+collections:
+  - name: "Stock API"
+    path: "collections/Stock API"
+  - name: "Empty Collection"
+    path: "collections/Empty Collection"
+
+specs:
+
+docs: ''
